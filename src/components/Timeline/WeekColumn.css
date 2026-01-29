@@ -1,0 +1,29 @@
+.week-column {
+  position: relative;
+  border-right: 1px solid #e5e7eb;
+  min-height: 100%;
+  flex-shrink: 0;
+}
+
+.week-column.current-week {
+  background-color: #f0f9ff;
+  border-right: 2px solid #3b82f6;
+}
+
+.week-header {
+  padding: 12px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  text-align: center;
+  border-bottom: 2px solid #e5e7eb;
+  background-color: #f9fafb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.current-week .week-header {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+}

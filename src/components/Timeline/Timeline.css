@@ -1,0 +1,85 @@
+.timeline-container {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.timeline-scroll {
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.timeline-grid {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.week-columns {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  z-index: 1;
+}
+
+.task-layer {
+  position: absolute;
+  top: 52px; /* Below week headers */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.task-layer > * {
+  pointer-events: all;
+}
+
+.empty-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #9ca3af;
+  font-size: 16px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.task-bar-overlay {
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: grabbing;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Scrollbar styling */
+.timeline-scroll::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.timeline-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.timeline-scroll::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+}
+
+.timeline-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

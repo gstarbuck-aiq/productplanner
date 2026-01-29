@@ -1,0 +1,132 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.date-range {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.header-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-button {
+  padding: 8px 16px;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-button:hover {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.nav-button:active {
+  transform: scale(0.98);
+}
+
+.today-button {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.today-button:hover {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.header-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.add-task-button {
+  padding: 10px 20px;
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.add-task-button:hover {
+  background-color: #2563eb;
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+}
+
+.add-task-button:active {
+  transform: scale(0.98);
+}
+
+.add-task-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .header-left,
+  .header-center,
+  .header-right {
+    flex: 1 1 100%;
+  }
+
+  .header-center {
+    order: 3;
+  }
+
+  .app-title {
+    font-size: 20px;
+  }
+
+  .nav-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+}
