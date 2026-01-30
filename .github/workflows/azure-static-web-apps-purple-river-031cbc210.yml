@@ -32,6 +32,8 @@ jobs:
                const coredemo = require('@actions/core')
                return await coredemo.getIDToken()
            result-encoding: string
+      - name: Install dependencies
+        run: npm install
       - name: Build
         run: npm run build
       - name: Deploy
