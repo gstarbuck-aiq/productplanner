@@ -1,7 +1,7 @@
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, getDate } from 'date-fns';
 import type { ViewMode } from '../types/timeline';
 import type { Task } from '../types/task';
-import { WEEK_WIDTH } from '../constants';
+import { WEEK_WIDTH, BASE_DAY_WIDTH } from '../constants';
 import {
   getWeekStart,
   getWeeksBetween,
@@ -91,28 +91,26 @@ export function calculateTaskWidth(
   }
 
   // For month view, calculate width based on actual date span
+  // This gives day-level precision based on the task's start and end dates
   return calculateMonthSpanWidth(task.startDate, task.endDate);
 }
 
 /**
  * Calculate the total width in pixels for a date span across months
+ * Uses exact day count for precise rendering
  */
 export function calculateMonthSpanWidth(startDate: Date, endDate: Date): number {
-  const monthStart = getMonthStart(startDate);
-  const monthEnd = getMonthStart(endDate);
-  const monthsSpanned = getMonthsBetween(monthStart, monthEnd) + 1;
+  // Calculate the exact number of days in the span
+  const days = differenceInDays(endDate, startDate);
 
-  let totalWidth = 0;
-  for (let i = 0; i < monthsSpanned; i++) {
-    const currentMonth = addMonths(monthStart, i);
-    totalWidth += calculateMonthWidth(currentMonth);
-  }
-
-  return totalWidth;
+  // Convert days to pixels using BASE_DAY_WIDTH
+  // Add 1 to include both start and end dates (inclusive)
+  return (days + 1) * BASE_DAY_WIDTH;
 }
 
 /**
  * Calculate the pixel offset from timeline start to a given date
+ * In month view, calculates exact position based on day within month
  */
 export function calculatePixelOffset(
   viewMode: ViewMode,
@@ -124,16 +122,23 @@ export function calculatePixelOffset(
     return weeksDiff * WEEK_WIDTH;
   }
 
-  // For month view, sum the widths of all months from start to target
-  const monthStart = getMonthStart(timelineStart);
+  // For month view, calculate offset with day-level precision
+  const timelineMonthStart = getMonthStart(timelineStart);
   const targetMonthStart = getMonthStart(targetDate);
-  const monthsDiff = getMonthsBetween(monthStart, targetMonthStart);
+  const monthsDiff = getMonthsBetween(timelineMonthStart, targetMonthStart);
 
+  // Sum the widths of all complete months between timeline start and target month
   let offset = 0;
   for (let i = 0; i < monthsDiff; i++) {
-    const currentMonth = addMonths(monthStart, i);
+    const currentMonth = addMonths(timelineMonthStart, i);
     offset += calculateMonthWidth(currentMonth);
   }
+
+  // Add the pixel offset for days within the target month
+  // getDate() returns the day of the month (1-31)
+  const dayOfMonth = getDate(targetDate);
+  const dayOffset = (dayOfMonth - 1) * BASE_DAY_WIDTH;
+  offset += dayOffset;
 
   return offset;
 }
@@ -169,6 +174,7 @@ export function calculateRangeWidth(
 
 /**
  * Convert pixel position to date
+ * In month view, calculates the exact day within the month
  */
 export function pixelToDate(
   viewMode: ViewMode,
@@ -181,18 +187,29 @@ export function pixelToDate(
   }
 
   // For month view, iterate through months until we reach the pixel offset
+  const timelineMonthStart = getMonthStart(timelineStart);
   let currentOffset = 0;
-  let currentDate = getMonthStart(timelineStart);
+  let currentDate = timelineMonthStart;
   let monthIndex = 0;
 
+  // Find which month the pixel falls into
   while (currentOffset < pixelOffset) {
     const monthWidth = calculateMonthWidth(currentDate);
     if (currentOffset + monthWidth > pixelOffset) {
-      break;
+      // The pixel is within this month
+      // Calculate which day of the month
+      const pixelWithinMonth = pixelOffset - currentOffset;
+      const dayIndex = Math.floor(pixelWithinMonth / BASE_DAY_WIDTH);
+
+      // Create a date for this specific day
+      const targetDate = new Date(currentDate);
+      targetDate.setDate(dayIndex + 1); // +1 because days are 1-indexed
+
+      return targetDate;
     }
     currentOffset += monthWidth;
     monthIndex++;
-    currentDate = addMonths(getMonthStart(timelineStart), monthIndex);
+    currentDate = addMonths(timelineMonthStart, monthIndex);
   }
 
   return currentDate;
