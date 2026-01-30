@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { TimelineSettingsProvider } from './context/TimelineSettingsContext';
+import { MilestoneProvider } from './context/MilestoneContext';
 import { TaskProvider } from './context/TaskContext';
 import { Header } from './components/Header/Header';
 import { Timeline } from './components/Timeline/Timeline';
@@ -8,7 +9,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import type { Task } from './types/task';
 import './App.css';
 
-function App() {
+function AppContent() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
 
@@ -40,20 +41,28 @@ function App() {
   ]);
 
   return (
+    <div className="app">
+      <Header onAddTask={handleOpenAddForm} />
+      <main className="main-content">
+        <Timeline onEditTask={handleOpenEditForm} />
+      </main>
+      <TaskForm
+        isOpen={isFormOpen}
+        onClose={handleCloseForm}
+        editTask={editTask}
+      />
+    </div>
+  );
+}
+
+function App() {
+  return (
     <TimelineSettingsProvider>
-      <TaskProvider>
-        <div className="app">
-          <Header onAddTask={handleOpenAddForm} />
-          <main className="main-content">
-            <Timeline onEditTask={handleOpenEditForm} />
-          </main>
-          <TaskForm
-            isOpen={isFormOpen}
-            onClose={handleCloseForm}
-            editTask={editTask}
-          />
-        </div>
-      </TaskProvider>
+      <MilestoneProvider>
+        <TaskProvider>
+          <AppContent />
+        </TaskProvider>
+      </MilestoneProvider>
     </TimelineSettingsProvider>
   );
 }

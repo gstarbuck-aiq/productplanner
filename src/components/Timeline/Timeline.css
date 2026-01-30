@@ -29,11 +29,26 @@
   flex-direction: row;
   position: relative;
   z-index: 1;
+  margin-top: 40px; /* Space for milestone layer */
+}
+
+.milestone-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.milestone-layer > * {
+  pointer-events: all;
 }
 
 .task-layer {
   position: absolute;
-  top: 52px; /* Below week headers */
+  top: 92px; /* Below milestone layer and week headers (40px milestone + 52px header) */
   left: 0;
   right: 0;
   bottom: 0;

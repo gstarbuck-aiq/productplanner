@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { useTasks } from '../../context/TaskContext';
+import { useMilestones } from '../../context/MilestoneContext';
 import { useTimelineScroll } from '../../hooks/useTimelineScroll';
 import { useTimelineDragDrop } from '../../hooks/useTimelineDragDrop';
 import { useTaskResize } from '../../hooks/useTaskResize';
 import { TimeColumn } from './TimeColumn';
 import { TaskBar } from './TaskBar';
+import { MilestoneIndicator } from './MilestoneIndicator';
 import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog';
 import type { Task } from '../../types/task';
 import { calculateTimelineHeight } from '../../utils/taskPositioning';
@@ -18,6 +20,7 @@ interface TimelineProps {
 
 export function Timeline({ onEditTask }: TimelineProps) {
   const { tasks, moveTask, resizeTask, deleteTask } = useTasks();
+  const { milestones } = useMilestones();
   const { timelineStart, visibleTimeUnits, viewMode } = useTimelineScroll();
   const [deleteConfirmTask, setDeleteConfirmTask] = useState<Task | null>(null);
 
@@ -104,6 +107,18 @@ export function Timeline({ onEditTask }: TimelineProps) {
               minHeight: Math.max(timelineHeight, 400),
             }}
           >
+            {/* Milestone layer (above time columns) */}
+            <div className="milestone-layer">
+              {milestones.map((milestone) => (
+                <MilestoneIndicator
+                  key={milestone.id}
+                  milestone={milestone}
+                  viewMode={viewMode}
+                  timelineStartDate={timelineStart}
+                />
+              ))}
+            </div>
+
             {/* Time columns (weeks or months) */}
             <div className="time-columns">
               {visibleTimeUnits.map((date, index) => (
