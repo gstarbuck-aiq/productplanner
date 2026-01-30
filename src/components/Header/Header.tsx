@@ -6,9 +6,10 @@ import './Header.css';
 
 interface HeaderProps {
   onAddTask: () => void;
+  onExportTimeline: () => void;
 }
 
-export function Header({ onAddTask }: HeaderProps) {
+export function Header({ onAddTask, onExportTimeline }: HeaderProps) {
   const { visibleTimeUnits, scrollToToday, scrollNext, scrollPrevious } =
     useTimelineScroll();
 
@@ -57,6 +58,14 @@ export function Header({ onAddTask }: HeaderProps) {
         </div>
 
         <div className="header-right">
+          <button
+            onClick={onExportTimeline}
+            className="export-button"
+            aria-label="Export timeline"
+            title="Export timeline (Print/PDF or Screenshot)"
+          >
+            ⤓ Export
+          </button>
           <button
             onClick={onAddTask}
             className="add-task-button"

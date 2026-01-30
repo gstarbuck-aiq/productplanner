@@ -75,6 +75,35 @@
   flex: 1;
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
+  align-items: center;
+}
+
+.export-button {
+  padding: 10px 20px;
+  background-color: #10b981;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.export-button:hover {
+  background-color: #059669;
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+}
+
+.export-button:active {
+  transform: scale(0.98);
+}
+
+.export-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
 }
 
 .add-task-button {
