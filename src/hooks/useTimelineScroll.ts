@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import { addDays, differenceInDays } from 'date-fns';
+import { addDays, addWeeks, addMonths, differenceInDays } from 'date-fns';
 import { useTimelineSettings } from '../context/TimelineSettingsContext';
 import { getTimeUnitStart } from '../utils/timeHelpers';
 
@@ -36,27 +36,27 @@ export function useTimelineScroll() {
     setDateRange(newStart, newEnd);
   }, [dateRangeStart, dateRangeEnd, setDateRange]);
 
-  // Scroll to next period (shift by half the range)
+  // Scroll to next period (shift by one week or month)
   const scrollNext = useCallback(() => {
-    const rangeLength = differenceInDays(dateRangeEnd, dateRangeStart);
-    const shiftAmount = Math.floor(rangeLength / 2);
+    const shiftFn = viewMode === 'week' ? addWeeks : addMonths;
+    const shiftAmount = 1;
 
-    const newStart = addDays(dateRangeStart, shiftAmount);
-    const newEnd = addDays(dateRangeEnd, shiftAmount);
+    const newStart = shiftFn(dateRangeStart, shiftAmount);
+    const newEnd = shiftFn(dateRangeEnd, shiftAmount);
 
     setDateRange(newStart, newEnd);
-  }, [dateRangeStart, dateRangeEnd, setDateRange]);
+  }, [viewMode, dateRangeStart, dateRangeEnd, setDateRange]);
 
-  // Scroll to previous period (shift by half the range)
+  // Scroll to previous period (shift by one week or month)
   const scrollPrevious = useCallback(() => {
-    const rangeLength = differenceInDays(dateRangeEnd, dateRangeStart);
-    const shiftAmount = Math.floor(rangeLength / 2);
+    const shiftFn = viewMode === 'week' ? addWeeks : addMonths;
+    const shiftAmount = -1;
 
-    const newStart = addDays(dateRangeStart, -shiftAmount);
-    const newEnd = addDays(dateRangeEnd, -shiftAmount);
+    const newStart = shiftFn(dateRangeStart, shiftAmount);
+    const newEnd = shiftFn(dateRangeEnd, shiftAmount);
 
     setDateRange(newStart, newEnd);
-  }, [dateRangeStart, dateRangeEnd, setDateRange]);
+  }, [viewMode, dateRangeStart, dateRangeEnd, setDateRange]);
 
   return {
     scrollContainerRef,

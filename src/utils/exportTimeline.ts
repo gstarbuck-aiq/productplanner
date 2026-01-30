@@ -1,129 +1,141 @@
 import { format } from 'date-fns';
 
 /**
+ * Deep clone an element and copy all computed styles inline
+ */
+function cloneWithStyles(element: HTMLElement): HTMLElement {
+  const clone = element.cloneNode(false) as HTMLElement;
+
+  // Copy all computed styles as inline styles
+  const computedStyle = window.getComputedStyle(element);
+  for (let i = 0; i < computedStyle.length; i++) {
+    const property = computedStyle[i];
+    const value = computedStyle.getPropertyValue(property);
+    clone.style.setProperty(property, value, computedStyle.getPropertyPriority(property));
+  }
+
+  // Clone ALL child nodes (elements and text nodes)
+  Array.from(element.childNodes).forEach((node) => {
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      // Recursively clone element children with styles
+      clone.appendChild(cloneWithStyles(node as HTMLElement));
+    } else if (node.nodeType === Node.TEXT_NODE) {
+      // Clone text nodes directly
+      clone.appendChild(node.cloneNode(true));
+    }
+  });
+
+  return clone;
+}
+
+/**
  * Export the timeline using browser's print functionality
- * This opens a print dialog where user can save as PDF or print to a printer
- *
- * @param element - The DOM element to capture (timeline container)
  */
 export async function exportTimelineAsPNG(
   element: HTMLElement,
   filename?: string
 ): Promise<void> {
-  // Since native canvas export is blocked by CORS, we'll use the browser's print capability
-  // User can then use "Save as PDF" or screenshot tools
-
   const timestamp = format(new Date(), 'yyyy-MM-dd_HHmmss');
   const title = `Timeline Export - ${timestamp}`;
 
-  // Create a new window with just the timeline
-  const printWindow = window.open('', '', 'width=1200,height=800');
+  // Find the timeline container
+  const timelineContainer = element.querySelector('.timeline-container') as HTMLElement;
+  if (!timelineContainer) {
+    alert('Timeline not found. Please try again.');
+    return;
+  }
 
+  // Get dimensions
+  const timelineGrid = timelineContainer.querySelector('.timeline-grid') as HTMLElement;
+  const fullWidth = timelineGrid ? timelineGrid.offsetWidth : 1200;
+  const fullHeight = timelineGrid ? timelineGrid.offsetHeight : 800;
+
+  // Create new window
+  const printWindow = window.open('', '', `width=${Math.min(fullWidth + 100, 1600)},height=900`);
   if (!printWindow) {
     alert('Please allow pop-ups for this site to enable export functionality.');
     return;
   }
 
-  // Clone the timeline element
-  const clone = element.cloneNode(true) as HTMLElement;
+  // Clone with all computed styles
+  const clone = cloneWithStyles(timelineContainer);
 
-  // Get all stylesheets
-  let styles = '';
-  for (let i = 0; i < document.styleSheets.length; i++) {
-    try {
-      const sheet = document.styleSheets[i];
-      if (sheet.cssRules) {
-        for (let j = 0; j < sheet.cssRules.length; j++) {
-          styles += sheet.cssRules[j].cssText + '\n';
-        }
+  // Get all stylesheet rules
+  let cssText = '';
+  try {
+    Array.from(document.styleSheets).forEach(sheet => {
+      try {
+        Array.from(sheet.cssRules).forEach(rule => {
+          cssText += rule.cssText + '\n';
+        });
+      } catch (e) {
+        console.warn('Could not access stylesheet:', sheet.href);
       }
-    } catch (e) {
-      // Skip stylesheets we can't access
-    }
+    });
+  } catch (e) {
+    console.warn('Error reading stylesheets:', e);
   }
 
-  // Create a complete HTML document
+  // Write document
   printWindow.document.write(`
     <!DOCTYPE html>
     <html>
       <head>
         <title>${title}</title>
+        <meta charset="UTF-8">
         <style>
           * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
           }
 
           body {
+            margin: 0;
             padding: 20px;
             background: white;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
           }
 
-          ${styles}
+          ${cssText}
 
-          /* Print-specific styles */
-          @media print {
-            body {
-              padding: 0;
-            }
-          }
-
-          /* Override any overflow settings for export */
+          /* Export overrides */
           .timeline-scroll {
             overflow: visible !important;
+          }
+
+          /* Force print colors */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          @media print {
+            body { padding: 10px; }
+            .instructions { display: none !important; }
+            @page {
+              size: landscape;
+              margin: 10mm;
+            }
           }
         </style>
       </head>
       <body>
         ${clone.outerHTML}
+        <div class="instructions" style="position: fixed; top: 10px; right: 10px; background: #3b82f6; color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 99999; font-size: 14px; max-width: 300px;">
+          <strong>Export Timeline</strong><br>
+          <button onclick="window.print()" style="margin-top: 10px; padding: 8px 16px; background: white; color: #3b82f6; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; width: 100%;">
+            Print / Save as PDF
+          </button>
+          <p style="margin-top: 10px; font-size: 12px; line-height: 1.4;">
+            In print dialog, enable:<br>
+            <strong>"Background graphics"</strong>
+          </p>
+          <p style="margin-top: 8px; font-size: 11px; opacity: 0.9;">
+            Or screenshot: Win+Shift+S / Cmd+Shift+4
+          </p>
+        </div>
       </body>
     </html>
   `);
 
   printWindow.document.close();
-
-  // Wait for content to load
-  setTimeout(() => {
-    // Show instructions
-    const instructions = printWindow.document.createElement('div');
-    instructions.style.cssText = `
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background: #3b82f6;
-      color: white;
-      padding: 15px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      z-index: 10000;
-      font-size: 14px;
-      max-width: 300px;
-    `;
-    instructions.innerHTML = `
-      <strong>Export Options:</strong><br>
-      <button onclick="window.print()" style="
-        margin-top: 10px;
-        padding: 8px 16px;
-        background: white;
-        color: #3b82f6;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: 600;
-        width: 100%;
-      ">Print / Save as PDF</button>
-      <p style="margin-top: 10px; font-size: 12px;">
-        Or use screenshot tool (Windows: Win+Shift+S, Mac: Cmd+Shift+4)
-      </p>
-    `;
-    printWindow.document.body.appendChild(instructions);
-
-    // Hide instructions when printing
-    const style = printWindow.document.createElement('style');
-    style.textContent = '@media print { .instructions { display: none !important; } }';
-    instructions.className = 'instructions';
-    printWindow.document.head.appendChild(style);
-  }, 100);
 }
