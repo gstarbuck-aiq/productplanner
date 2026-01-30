@@ -19,6 +19,16 @@ export const TASK_GAP = 4;
 export const VISIBLE_WEEKS = 12;
 
 /**
+ * Base width per day in pixels (derived from WEEK_WIDTH / 7)
+ */
+export const BASE_DAY_WIDTH = WEEK_WIDTH / 7;
+
+/**
+ * Default date range in weeks (for initial timeline view)
+ */
+export const DEFAULT_DATE_RANGE_WEEKS = 12;
+
+/**
  * Week starts on Monday (0 = Sunday, 1 = Monday)
  */
 export const WEEK_STARTS_ON = 1;

@@ -5,7 +5,7 @@ import {
   findOverlappingTasks,
   groupOverlappingTasks,
 } from './collision';
-import { Task } from '../types/task';
+import type { Task } from '../types/task';
 
 const createTask = (
   id: string,

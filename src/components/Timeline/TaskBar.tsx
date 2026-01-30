@@ -1,28 +1,30 @@
-import React from 'react';
+import type { CSSProperties, MouseEvent } from 'react';
 import { useDraggable } from '@dnd-kit/core';
-import { Task } from '../../types/task';
-import { ResizeHandle } from '../../hooks/useTaskResize';
+import type { Task } from '../../types/task';
+import type { ViewMode } from '../../types/timeline';
+import type { ResizeHandle } from '../../hooks/useTaskResize';
 import { calculateTaskDimensions } from '../../utils/taskPositioning';
 import './TaskBar.css';
 
 interface TaskBarProps {
   task: Task;
   timelineStartDate: Date;
+  viewMode: ViewMode;
   onResizeStart?: (task: Task, handle: ResizeHandle, clientX: number) => void;
   onDelete?: (taskId: string) => void;
   onEdit?: (task: Task) => void;
 }
 
-export function TaskBar({ task, timelineStartDate, onResizeStart, onDelete, onEdit }: TaskBarProps) {
+export function TaskBar({ task, timelineStartDate, viewMode, onResizeStart, onDelete, onEdit }: TaskBarProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: task.id,
       data: { task },
     });
 
-  const dimensions = calculateTaskDimensions(task, timelineStartDate);
+  const dimensions = calculateTaskDimensions(task, timelineStartDate, viewMode);
 
-  const style: React.CSSProperties = {
+  const style: CSSProperties = {
     position: 'absolute',
     left: dimensions.left,
     top: dimensions.top,
@@ -36,21 +38,21 @@ export function TaskBar({ task, timelineStartDate, onResizeStart, onDelete, onEd
     cursor: isDragging ? 'grabbing' : 'grab',
   };
 
-  const handleResizeMouseDown = (handle: ResizeHandle) => (e: React.MouseEvent) => {
+  const handleResizeMouseDown = (handle: ResizeHandle) => (e: MouseEvent) => {
     e.stopPropagation();
     if (onResizeStart) {
       onResizeStart(task, handle, e.clientX);
     }
   };
 
-  const handleDelete = (e: React.MouseEvent) => {
+  const handleDelete = (e: MouseEvent) => {
     e.stopPropagation();
     if (onDelete) {
       onDelete(task.id);
     }
   };
 
-  const handleEdit = (e: React.MouseEvent) => {
+  const handleEdit = (e: MouseEvent) => {
     e.stopPropagation();
     if (onEdit) {
       onEdit(task);

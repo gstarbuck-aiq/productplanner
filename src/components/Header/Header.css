@@ -104,6 +104,29 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 
+/* Header controls section */
+.header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  gap: 16px;
+}
+
+.header-controls-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .header {

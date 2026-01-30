@@ -1,6 +1,7 @@
-import React from 'react';
 import { useTimelineScroll } from '../../hooks/useTimelineScroll';
-import { formatWeekRange } from '../../utils/weekHelpers';
+import { format } from 'date-fns';
+import { DateRangePicker } from '../Timeline/DateRangePicker';
+import { ViewModeToggle } from '../Timeline/ViewModeToggle';
 import './Header.css';
 
 interface HeaderProps {
@@ -8,14 +9,14 @@ interface HeaderProps {
 }
 
 export function Header({ onAddTask }: HeaderProps) {
-  const { visibleWeeks, scrollToToday, scrollNext, scrollPrevious } =
+  const { visibleTimeUnits, scrollToToday, scrollNext, scrollPrevious } =
     useTimelineScroll();
 
-  const firstWeek = visibleWeeks[0];
-  const lastWeek = visibleWeeks[visibleWeeks.length - 1];
+  const firstDate = visibleTimeUnits[0];
+  const lastDate = visibleTimeUnits[visibleTimeUnits.length - 1];
 
-  const dateRange = firstWeek && lastWeek
-    ? formatWeekRange(firstWeek, lastWeek)
+  const dateRangeDisplay = firstDate && lastDate
+    ? `${format(firstDate, 'MMM d, yyyy')} - ${format(lastDate, 'MMM d, yyyy')}`
     : '';
 
   return (
@@ -23,7 +24,7 @@ export function Header({ onAddTask }: HeaderProps) {
       <header className="header">
         <div className="header-left">
           <h1 className="app-title">Product Planner</h1>
-          <div className="date-range">{dateRange}</div>
+          <div className="date-range">{dateRangeDisplay}</div>
         </div>
 
         <div className="header-center">
@@ -31,8 +32,8 @@ export function Header({ onAddTask }: HeaderProps) {
             <button
               onClick={scrollPrevious}
               className="nav-button"
-              aria-label="Previous weeks"
-              title="Previous weeks"
+              aria-label="Previous"
+              title="Go to previous period"
             >
               &#8592; Previous
             </button>
@@ -40,15 +41,15 @@ export function Header({ onAddTask }: HeaderProps) {
               onClick={scrollToToday}
               className="nav-button today-button"
               aria-label="Go to today"
-              title="Go to current week"
+              title="Center on today"
             >
               Today
             </button>
             <button
               onClick={scrollNext}
               className="nav-button"
-              aria-label="Next weeks"
-              title="Next weeks"
+              aria-label="Next"
+              title="Go to next period"
             >
               Next &#8594;
             </button>
@@ -65,6 +66,14 @@ export function Header({ onAddTask }: HeaderProps) {
           </button>
         </div>
       </header>
+      <div className="header-controls">
+        <div className="header-controls-left">
+          <ViewModeToggle />
+        </div>
+        <div className="header-controls-right">
+          <DateRangePicker />
+        </div>
+      </div>
     </>
   );
 }

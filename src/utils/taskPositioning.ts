@@ -1,8 +1,9 @@
-import { Task } from '../types/task';
-import { TaskPosition } from '../types/timeline';
+import type { Task } from '../types/task';
+import type { TaskPosition, ViewMode } from '../types/timeline';
 import { TASK_HEIGHT, TASK_GAP, WEEK_WIDTH } from '../constants';
 import { findOverlappingTasks } from './collision';
 import { getWeeksBetween } from './weekHelpers';
+import { calculatePixelOffset, calculateTaskWidth } from './timeHelpers';
 
 /**
  * Calculate stack positions for all tasks using a greedy algorithm
@@ -51,11 +52,11 @@ export function calculateStackPositions(tasks: Task[]): Task[] {
  */
 export function calculateTaskDimensions(
   task: Task,
-  timelineStartDate: Date
+  timelineStartDate: Date,
+  viewMode: ViewMode = 'week'
 ): TaskPosition {
-  const weekOffset = getWeeksBetween(timelineStartDate, task.startDate);
-  const left = weekOffset * WEEK_WIDTH;
-  const width = task.durationWeeks * WEEK_WIDTH;
+  const left = calculatePixelOffset(viewMode, timelineStartDate, task.startDate);
+  const width = calculateTaskWidth(viewMode, task, timelineStartDate);
   const top = task.stackPosition * (TASK_HEIGHT + TASK_GAP);
   const height = TASK_HEIGHT;
 

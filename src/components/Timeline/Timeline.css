@@ -12,15 +12,19 @@
   height: 100%;
   overflow-x: auto;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 .timeline-grid {
   position: relative;
   display: flex;
   flex-direction: column;
+  width: fit-content;
+  min-width: 100%;
 }
 
-.week-columns {
+.week-columns,
+.time-columns {
   display: flex;
   flex-direction: row;
   position: relative;

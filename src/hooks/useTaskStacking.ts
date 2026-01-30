@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Task } from '../types/task';
+import type { Task } from '../types/task';
 import { calculateStackPositions } from '../utils/taskPositioning';
 
 /**

@@ -1,63 +1,72 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { getWeekStart, addWeeks, generateWeeks } from '../utils/weekHelpers';
-import { VISIBLE_WEEKS } from '../constants';
+import { useCallback, useRef } from 'react';
+import { addDays, differenceInDays } from 'date-fns';
+import { useTimelineSettings } from '../context/TimelineSettingsContext';
+import { getTimeUnitStart } from '../utils/timeHelpers';
 
 /**
  * Custom hook for managing timeline viewport and scrolling
  */
 export function useTimelineScroll() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [timelineStart, setTimelineStart] = useState<Date>(() => {
-    // Start 2 weeks before current week
-    return getWeekStart(addWeeks(new Date(), -2));
-  });
+  const {
+    viewMode,
+    dateRangeStart,
+    dateRangeEnd,
+    visibleTimeUnits,
+    setDateRange,
+  } = useTimelineSettings();
 
-  // Generate visible weeks
-  const visibleWeeks = generateWeeks(timelineStart, VISIBLE_WEEKS);
+  // Scroll to a specific date (normalizes to time unit start)
+  const scrollToDate = useCallback((date: Date) => {
+    const normalizedStart = getTimeUnitStart(viewMode, date);
+    const rangeLength = differenceInDays(dateRangeEnd, dateRangeStart);
+    const normalizedEnd = addDays(normalizedStart, rangeLength);
+    setDateRange(normalizedStart, normalizedEnd);
+  }, [viewMode, dateRangeStart, dateRangeEnd, setDateRange]);
 
-  // Scroll to a specific week
-  const scrollToWeek = useCallback((weekStart: Date) => {
-    setTimelineStart(getWeekStart(weekStart));
-  }, []);
-
-  // Scroll to current week
+  // Scroll to current date (centered)
   const scrollToToday = useCallback(() => {
     const today = new Date();
-    const weekStart = getWeekStart(addWeeks(today, -2));
-    setTimelineStart(weekStart);
-  }, []);
+    const rangeLength = differenceInDays(dateRangeEnd, dateRangeStart);
+    const halfRange = Math.floor(rangeLength / 2);
 
-  // Scroll by a number of weeks
-  const scrollByWeeks = useCallback(
-    (weeks: number) => {
-      setTimelineStart((prev) => addWeeks(prev, weeks));
-    },
-    []
-  );
+    const newStart = addDays(today, -halfRange);
+    const newEnd = addDays(today, halfRange);
 
-  // Scroll to next week(s)
+    setDateRange(newStart, newEnd);
+  }, [dateRangeStart, dateRangeEnd, setDateRange]);
+
+  // Scroll to next period (shift by half the range)
   const scrollNext = useCallback(() => {
-    scrollByWeeks(2);
-  }, [scrollByWeeks]);
+    const rangeLength = differenceInDays(dateRangeEnd, dateRangeStart);
+    const shiftAmount = Math.floor(rangeLength / 2);
 
-  // Scroll to previous week(s)
+    const newStart = addDays(dateRangeStart, shiftAmount);
+    const newEnd = addDays(dateRangeEnd, shiftAmount);
+
+    setDateRange(newStart, newEnd);
+  }, [dateRangeStart, dateRangeEnd, setDateRange]);
+
+  // Scroll to previous period (shift by half the range)
   const scrollPrevious = useCallback(() => {
-    scrollByWeeks(-2);
-  }, [scrollByWeeks]);
+    const rangeLength = differenceInDays(dateRangeEnd, dateRangeStart);
+    const shiftAmount = Math.floor(rangeLength / 2);
 
-  // Auto-scroll to current week on mount
-  useEffect(() => {
-    scrollToToday();
-  }, [scrollToToday]);
+    const newStart = addDays(dateRangeStart, -shiftAmount);
+    const newEnd = addDays(dateRangeEnd, -shiftAmount);
+
+    setDateRange(newStart, newEnd);
+  }, [dateRangeStart, dateRangeEnd, setDateRange]);
 
   return {
     scrollContainerRef,
-    timelineStart,
-    visibleWeeks,
-    scrollToWeek,
+    timelineStart: dateRangeStart,
+    visibleWeeks: visibleTimeUnits, // Keep name for backwards compat
+    visibleTimeUnits,
+    viewMode,
+    scrollToDate,
     scrollToToday,
     scrollNext,
     scrollPrevious,
-    scrollByWeeks,
   };
 }

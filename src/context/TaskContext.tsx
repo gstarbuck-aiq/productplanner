@@ -1,12 +1,12 @@
-import React, {
+import {
   createContext,
   useContext,
   useReducer,
   useCallback,
   useEffect,
-  ReactNode,
 } from 'react';
-import { Task, TaskInput, TaskJSON } from '../types/task';
+import type { ReactNode } from 'react';
+import type { Task, TaskInput, TaskJSON } from '../types/task';
 import { STORAGE_KEY } from '../constants';
 import { calculateEndDate } from '../utils/weekHelpers';
 import { useTaskStacking } from '../hooks/useTaskStacking';

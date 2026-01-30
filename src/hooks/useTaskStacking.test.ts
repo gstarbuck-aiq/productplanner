@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useTaskStacking } from './useTaskStacking';
-import { Task } from '../types/task';
+import type { Task } from '../types/task';
 
 const createTask = (
   id: string,

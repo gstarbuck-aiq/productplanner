@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { TimelineSettingsProvider } from './context/TimelineSettingsContext';
 import { TaskProvider } from './context/TaskContext';
 import { Header } from './components/Header/Header';
 import { Timeline } from './components/Timeline/Timeline';
 import { TaskForm } from './components/TaskForm/TaskForm';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { Task } from './types/task';
+import type { Task } from './types/task';
 import './App.css';
 
 function App() {
@@ -39,19 +40,21 @@ function App() {
   ]);
 
   return (
-    <TaskProvider>
-      <div className="app">
-        <Header onAddTask={handleOpenAddForm} />
-        <main className="main-content">
-          <Timeline onEditTask={handleOpenEditForm} />
-        </main>
-        <TaskForm
-          isOpen={isFormOpen}
-          onClose={handleCloseForm}
-          editTask={editTask}
-        />
-      </div>
-    </TaskProvider>
+    <TimelineSettingsProvider>
+      <TaskProvider>
+        <div className="app">
+          <Header onAddTask={handleOpenAddForm} />
+          <main className="main-content">
+            <Timeline onEditTask={handleOpenEditForm} />
+          </main>
+          <TaskForm
+            isOpen={isFormOpen}
+            onClose={handleCloseForm}
+            editTask={editTask}
+          />
+        </div>
+      </TaskProvider>
+    </TimelineSettingsProvider>
   );
 }
 

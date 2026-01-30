@@ -1,4 +1,3 @@
-import React from 'react';
 import { formatWeekHeader, isCurrentWeek } from '../../utils/weekHelpers';
 import { WEEK_WIDTH } from '../../constants';
 import './WeekColumn.css';

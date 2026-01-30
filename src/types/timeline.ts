@@ -26,3 +26,16 @@ export interface TaskPosition {
   top: number;
   height: number;
 }
+
+/**
+ * View mode for the timeline
+ */
+export type ViewMode = 'week' | 'month';
+
+/**
+ * Date range for the timeline
+ */
+export interface DateRange {
+  start: Date;
+  end: Date;
+}

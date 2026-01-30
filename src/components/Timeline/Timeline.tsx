@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { useTasks } from '../../context/TaskContext';
 import { useTimelineScroll } from '../../hooks/useTimelineScroll';
 import { useTimelineDragDrop } from '../../hooks/useTimelineDragDrop';
 import { useTaskResize } from '../../hooks/useTaskResize';
-import { WeekColumn } from './WeekColumn';
+import { TimeColumn } from './TimeColumn';
 import { TaskBar } from './TaskBar';
 import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog';
-import { Task } from '../../types/task';
+import type { Task } from '../../types/task';
 import { calculateTimelineHeight } from '../../utils/taskPositioning';
-import { WEEK_WIDTH } from '../../constants';
+import { getTimeUnitWidth, calculateTaskWidth } from '../../utils/timeHelpers';
 import './Timeline.css';
 
 interface TimelineProps {
@@ -18,18 +18,20 @@ interface TimelineProps {
 
 export function Timeline({ onEditTask }: TimelineProps) {
   const { tasks, moveTask, resizeTask, deleteTask } = useTasks();
-  const { timelineStart, visibleWeeks } = useTimelineScroll();
+  const { timelineStart, visibleTimeUnits, viewMode } = useTimelineScroll();
   const [deleteConfirmTask, setDeleteConfirmTask] = useState<Task | null>(null);
 
   const { handleDragStart, handleDragEnd, handleDragCancel, activeTask } =
     useTimelineDragDrop({
       onTaskMove: moveTask,
       timelineStartDate: timelineStart,
+      viewMode,
     });
 
-  const { startResize, handleResize, endResize, cancelResize, isResizing } =
+  const { startResize, handleResize, endResize, isResizing } =
     useTaskResize({
       onResizeComplete: resizeTask,
+      viewMode,
     });
 
   // Add global mouse event listeners for resize
@@ -62,7 +64,11 @@ export function Timeline({ onEditTask }: TimelineProps) {
   );
 
   const timelineHeight = calculateTimelineHeight(tasks);
-  const timelineWidth = visibleWeeks.length * WEEK_WIDTH;
+
+  // Calculate dynamic timeline width based on view mode
+  const timelineWidth = visibleTimeUnits.reduce((total, date) => {
+    return total + getTimeUnitWidth(viewMode, date);
+  }, 0);
 
   const handleDeleteClick = (taskId: string) => {
     const task = tasks.find((t) => t.id === taskId);
@@ -98,12 +104,13 @@ export function Timeline({ onEditTask }: TimelineProps) {
               minHeight: Math.max(timelineHeight, 400),
             }}
           >
-            {/* Week columns */}
-            <div className="week-columns">
-              {visibleWeeks.map((weekStart, index) => (
-                <WeekColumn
-                  key={weekStart.toISOString()}
-                  weekStart={weekStart}
+            {/* Time columns (weeks or months) */}
+            <div className="time-columns">
+              {visibleTimeUnits.map((date, index) => (
+                <TimeColumn
+                  key={date.toISOString()}
+                  viewMode={viewMode}
+                  date={date}
                   index={index}
                 />
               ))}
@@ -116,6 +123,7 @@ export function Timeline({ onEditTask }: TimelineProps) {
                   key={task.id}
                   task={task}
                   timelineStartDate={timelineStart}
+                  viewMode={viewMode}
                   onResizeStart={startResize}
                   onDelete={handleDeleteClick}
                   onEdit={onEditTask}
@@ -140,7 +148,7 @@ export function Timeline({ onEditTask }: TimelineProps) {
             className="task-bar-overlay"
             style={{
               backgroundColor: activeTask.color,
-              width: activeTask.durationWeeks * WEEK_WIDTH,
+              width: calculateTaskWidth(viewMode, activeTask, timelineStart),
             }}
           >
             <span className="task-title">

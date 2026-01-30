@@ -6,7 +6,7 @@ import {
   pixelToWeekOffset,
   weekOffsetToPixel,
 } from './taskPositioning';
-import { Task } from '../types/task';
+import type { Task } from '../types/task';
 import { TASK_HEIGHT, TASK_GAP, WEEK_WIDTH } from '../constants';
 
 const createTask = (

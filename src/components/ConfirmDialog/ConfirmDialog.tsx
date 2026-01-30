@@ -1,4 +1,3 @@
-import React from 'react';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import './ConfirmDialog.css';
 

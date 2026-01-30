@@ -1,6 +1,7 @@
-import React, { useState, FormEvent, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import { useTasks } from '../../context/TaskContext';
-import { Task } from '../../types/task';
+import type { Task } from '../../types/task';
 import { getWeekStart, calculateEndDate } from '../../utils/weekHelpers';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import { COLOR_PALETTE, MIN_TASK_DURATION } from '../../constants';
