@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import type { Milestone } from '../../types/milestone';
 import type { ViewMode } from '../../types/timeline';
 import { useMilestones } from '../../context/MilestoneContext';
-import { calculatePixelOffset, getTimeUnitWidth } from '../../utils/timeHelpers';
+import { calculatePixelOffset } from '../../utils/timeHelpers';
 import './MilestoneIndicator.css';
 
 interface MilestoneIndicatorProps {

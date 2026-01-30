@@ -5,7 +5,7 @@ import type { ViewMode } from '../types/timeline';
 import { getWeekStart, addWeeks } from '../utils/weekHelpers';
 import { getMonthStart } from '../utils/monthHelpers';
 import { pixelToWeekOffset } from '../utils/taskPositioning';
-import { pixelToDate, getTimeUnitStart } from '../utils/timeHelpers';
+import { pixelToDate } from '../utils/timeHelpers';
 
 interface UseTimelineDragDropProps {
   onTaskMove: (taskId: string, newStartDate: Date) => void;

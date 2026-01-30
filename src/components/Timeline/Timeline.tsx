@@ -163,7 +163,7 @@ export function Timeline({ onEditTask }: TimelineProps) {
             className="task-bar-overlay"
             style={{
               backgroundColor: activeTask.color,
-              width: calculateTaskWidth(viewMode, activeTask, timelineStart),
+              width: calculateTaskWidth(viewMode, activeTask),
             }}
           >
             <span className="task-title">

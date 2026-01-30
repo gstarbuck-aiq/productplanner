@@ -83,8 +83,7 @@ export function addTimeUnits(viewMode: ViewMode, date: Date, units: number): Dat
  */
 export function calculateTaskWidth(
   viewMode: ViewMode,
-  task: Task,
-  timelineStart: Date
+  task: Task
 ): number {
   if (viewMode === 'week') {
     return task.durationWeeks * WEEK_WIDTH;

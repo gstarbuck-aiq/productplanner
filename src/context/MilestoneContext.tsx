@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useCallback, type ReactNode } from 'react';
 import type { Milestone, MilestoneInput, MilestoneJSON } from '../types/milestone';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { getWeekStart } from '../utils/weekHelpers';
@@ -14,15 +14,6 @@ interface MilestoneContextValue {
 const MilestoneContext = createContext<MilestoneContextValue | undefined>(undefined);
 
 const STORAGE_KEY = 'taskplanner_milestones';
-
-function serializeMilestone(milestone: Milestone): MilestoneJSON {
-  return {
-    ...milestone,
-    date: milestone.date.toISOString(),
-    createdAt: milestone.createdAt.toISOString(),
-    updatedAt: milestone.updatedAt.toISOString(),
-  };
-}
 
 function deserializeMilestone(json: MilestoneJSON): Milestone {
   return {

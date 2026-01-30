@@ -1,17 +1,10 @@
-import { createContext, useContext, useState, useCallback, ReactNode, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react';
 import { addWeeks } from 'date-fns';
 import type { ViewMode, DateRange } from '../types/timeline';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { getWeekStart } from '../utils/weekHelpers';
-import { getMonthStart } from '../utils/monthHelpers';
 import { getTimeUnitStart, generateTimeUnits } from '../utils/timeHelpers';
 import { DEFAULT_DATE_RANGE_WEEKS } from '../constants';
-
-interface TimelineSettings {
-  viewMode: ViewMode;
-  dateRangeStart: Date;
-  dateRangeEnd: Date;
-}
 
 interface TimelineSettingsContextValue {
   viewMode: ViewMode;

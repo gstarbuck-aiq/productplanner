@@ -4,7 +4,7 @@ import type { ViewMode } from '../types/timeline';
 import { getWeekStart, addWeeks, calculateDuration, calculateEndDate } from '../utils/weekHelpers';
 import { getMonthStart, addMonths } from '../utils/monthHelpers';
 import { pixelToWeekOffset } from '../utils/taskPositioning';
-import { pixelToDate, getTimeUnitStart, getDaysBetween } from '../utils/timeHelpers';
+import { pixelToDate, getDaysBetween } from '../utils/timeHelpers';
 import { MIN_TASK_DURATION } from '../constants';
 
 export type ResizeHandle = 'left' | 'right';

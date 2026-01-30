@@ -2,7 +2,6 @@ import type { Task } from '../types/task';
 import type { TaskPosition, ViewMode } from '../types/timeline';
 import { TASK_HEIGHT, TASK_GAP, WEEK_WIDTH } from '../constants';
 import { findOverlappingTasks } from './collision';
-import { getWeeksBetween } from './weekHelpers';
 import { calculatePixelOffset, calculateTaskWidth } from './timeHelpers';
 
 /**
@@ -56,7 +55,7 @@ export function calculateTaskDimensions(
   viewMode: ViewMode = 'week'
 ): TaskPosition {
   const left = calculatePixelOffset(viewMode, timelineStartDate, task.startDate);
-  const width = calculateTaskWidth(viewMode, task, timelineStartDate);
+  const width = calculateTaskWidth(viewMode, task);
   const top = task.stackPosition * (TASK_HEIGHT + TASK_GAP);
   const height = TASK_HEIGHT;
 

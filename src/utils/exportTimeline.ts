@@ -32,8 +32,7 @@ function cloneWithStyles(element: HTMLElement): HTMLElement {
  * Export the timeline using browser's print functionality
  */
 export async function exportTimelineAsPNG(
-  element: HTMLElement,
-  filename?: string
+  element: HTMLElement
 ): Promise<void> {
   const timestamp = format(new Date(), 'yyyy-MM-dd_HHmmss');
   const title = `Timeline Export - ${timestamp}`;
@@ -48,7 +47,6 @@ export async function exportTimelineAsPNG(
   // Get dimensions
   const timelineGrid = timelineContainer.querySelector('.timeline-grid') as HTMLElement;
   const fullWidth = timelineGrid ? timelineGrid.offsetWidth : 1200;
-  const fullHeight = timelineGrid ? timelineGrid.offsetHeight : 800;
 
   // Create new window
   const printWindow = window.open('', '', `width=${Math.min(fullWidth + 100, 1600)},height=900`);
