@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+# Product Planner
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A visual timeline tool for planning tasks and milestones. Built with React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Timeline view** — visualize tasks as horizontal bars across a week or month grid
+- **Task management** — add, edit, and delete tasks with a title, start date, duration, and color
+- **Milestones** — mark specific weeks with milestone labels directly on the timeline
+- **Week / month view modes** — toggle between week-level and month-level granularity
+- **Date range picker** — control which time window is displayed
+- **Navigation** — jump to today or step forward/backward through the timeline
+- **Export** — export the timeline as a PNG screenshot
+- **Keyboard shortcut** — `Ctrl+N` opens the add task form
+- **Persistent state** — tasks, milestones, and timeline settings are saved to `localStorage`
 
-## React Compiler
+## Development Commands
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+# Start development server with HMR
+npm run dev
 
-## Expanding the ESLint configuration
+# Build for production
+npm run build
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+# Lint all TypeScript/TSX files
+npm run lint
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Preview production build locally
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Technology Stack
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Framework**: React 19
+- **Language**: TypeScript 5 (strict mode)
+- **Build tool**: Vite 7 with `@vitejs/plugin-react` (Babel / Fast Refresh)
+- **Date utilities**: date-fns
+- **Linting**: ESLint 9 with TypeScript ESLint, React Hooks, and React Refresh plugins
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Project Structure
+
+```
+src/
+  components/
+    Header/          # App header, navigation, date range picker, view toggle
+    TaskForm/        # Add/edit task modal form
+    Timeline/        # Timeline grid, task bars, milestone indicators
+    ConfirmDialog/   # Generic confirmation dialog
+  context/
+    TaskContext      # Task CRUD + localStorage persistence
+    MilestoneContext # Milestone CRUD + localStorage persistence
+    TimelineSettingsContext # View mode + date range state
+  hooks/             # useLocalStorage, useKeyboardShortcuts, useTimelineScroll, …
+  types/             # TypeScript interfaces (Task, Milestone, timeline types)
+  utils/             # Week/time helpers, timeline PNG export
+  constants.ts
 ```
