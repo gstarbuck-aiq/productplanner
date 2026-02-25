@@ -22,10 +22,6 @@ export function useTimelineDragDrop({
   viewMode,
 }: UseTimelineDragDropProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({
-    x: 0,
-    y: 0,
-  });
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
     const task = event.active.data.current?.task as Task;
@@ -40,26 +36,17 @@ export function useTimelineDragDrop({
       const task = active.data.current?.task as Task;
 
       if (task && delta.x !== 0) {
-        let newStartDate: Date;
-
         if (viewMode === 'week') {
-          // Calculate how many weeks to move
           const weeksDelta = Math.round(pixelToWeekOffset(delta.x));
-
           if (weeksDelta !== 0) {
-            // Calculate new start date
-            newStartDate = getWeekStart(addWeeks(task.startDate, weeksDelta));
+            const newStartDate = getWeekStart(addWeeks(task.startDate, weeksDelta));
             onTaskMove(task.id, newStartDate);
           }
         } else {
-          // Month view - snap to month boundaries
-          // Calculate the current pixel position of the task
+          // Month view - snap start to month boundary
           const currentTaskLeft = (event.active.rect.current.translated?.left || 0);
           const targetPixel = currentTaskLeft + delta.x;
-
-          // Convert pixel to date
-          const targetDate = pixelToDate(viewMode, timelineStartDate, targetPixel);
-          newStartDate = getMonthStart(targetDate);
+          const newStartDate = getMonthStart(pixelToDate(viewMode, timelineStartDate, targetPixel));
 
           // Only move if the month actually changed
           if (newStartDate.getTime() !== getMonthStart(task.startDate).getTime()) {
@@ -69,19 +56,16 @@ export function useTimelineDragDrop({
       }
 
       setActiveTask(null);
-      setDragOffset({ x: 0, y: 0 });
     },
     [onTaskMove, viewMode, timelineStartDate]
   );
 
   const handleDragCancel = useCallback(() => {
     setActiveTask(null);
-    setDragOffset({ x: 0, y: 0 });
   }, []);
 
   return {
     activeTask,
-    dragOffset,
     handleDragStart,
     handleDragEnd,
     handleDragCancel,

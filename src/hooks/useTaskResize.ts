@@ -82,9 +82,7 @@ function computeMonthRightResize(
 ): ResizeResult {
   const endDate = calculateEndDate(resizingTask.initialStartDate, resizingTask.initialDuration);
   const initialEndPixel = calculatePixelOffset('month', timelineStartDate, endDate);
-  const newEndDate = getMonthStart(
-    pixelToDate('month', timelineStartDate, Math.max(0, initialEndPixel + deltaX))
-  );
+  const newEndDate = pixelToDate('month', timelineStartDate, Math.max(0, initialEndPixel + deltaX));
   const days = getDaysBetween(resizingTask.initialStartDate, newEndDate);
   return {
     taskId: resizingTask.task.id,

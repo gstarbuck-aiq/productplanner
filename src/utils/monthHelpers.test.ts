@@ -128,8 +128,8 @@ describe('monthHelpers', () => {
       expect(isCurrentMonth(new Date())).toBe(true);
     });
 
-    it('should return false for a date far in the future', () => {
-      expect(isCurrentMonth(new Date('2030-01-01'))).toBe(false);
+    it('should return false for a date in a definitively past month', () => {
+      expect(isCurrentMonth(new Date('2000-01-01'))).toBe(false);
     });
   });
 
