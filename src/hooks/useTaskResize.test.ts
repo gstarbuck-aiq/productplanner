@@ -6,8 +6,9 @@ import { WEEK_WIDTH } from '../constants';
 import { calculateEndDate } from '../utils/weekHelpers';
 import { calculatePixelOffset } from '../utils/timeHelpers';
 
-// Stable Monday to anchor all date arithmetic
+// Stable dates to anchor all date arithmetic
 const JAN_8 = new Date('2024-01-08'); // Monday
+const JAN_1 = new Date('2024-01-01'); // Month start — used in month-view tests
 
 function makeTask(startDate: Date, durationWeeks: number): Task {
   return {
