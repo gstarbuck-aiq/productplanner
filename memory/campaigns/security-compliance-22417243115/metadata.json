@@ -1,0 +1,23 @@
+{
+  "campaign_id": "security-compliance-22417243115",
+  "type": "security-compliance",
+  "owner": "security-team",
+  "executive_sponsor": "CISO",
+  "audit_deadline": "2026-03-30",
+  "budget_approved": true,
+  "created_at": "2026-02-25T00:00:00Z",
+  "vulnerability_tasks": [],
+  "scan_status": "complete",
+  "scan_outcome": "no_alerts_found",
+  "recommended_actions": [
+    "Enable GitHub Code Scanning (CodeQL) via .github/workflows/codeql.yml",
+    "Enable Dependabot alerts and security updates",
+    "Enable GitHub Secret Scanning",
+    "Run npm audit to check for dependency vulnerabilities"
+  ],
+  "governance": {
+    "approval_status": "approved",
+    "compliance_requirement": "SOC2",
+    "review_checkpoints": ["weekly", "2-weeks-before-audit"]
+  }
+}
