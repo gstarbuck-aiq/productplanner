@@ -136,13 +136,6 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     }
   }, [stackedTasks, state.isLoading]);
 
-  // Update tasks when stacking changes
-  useEffect(() => {
-    if (JSON.stringify(state.tasks) !== JSON.stringify(stackedTasks)) {
-      dispatch({ type: 'SET_TASKS', payload: stackedTasks });
-    }
-  }, [stackedTasks, state.tasks]);
-
   const addTask = useCallback((input: TaskInput): string => {
     const now = new Date();
     const task: Task = {

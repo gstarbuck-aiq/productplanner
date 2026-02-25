@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useCallback, useState } from 'react';
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { useTasks } from '../../context/TaskContext';
 import { useMilestones } from '../../context/MilestoneContext';
@@ -68,17 +68,17 @@ export function Timeline({ onEditTask }: TimelineProps) {
 
   const timelineHeight = calculateTimelineHeight(tasks);
 
-  // Calculate dynamic timeline width based on view mode
-  const timelineWidth = visibleTimeUnits.reduce((total, date) => {
-    return total + getTimeUnitWidth(viewMode, date);
-  }, 0);
+  const timelineWidth = useMemo(
+    () => visibleTimeUnits.reduce((total, date) => total + getTimeUnitWidth(viewMode, date), 0),
+    [visibleTimeUnits, viewMode]
+  );
 
-  const handleDeleteClick = (taskId: string) => {
+  const handleDeleteClick = useCallback((taskId: string) => {
     const task = tasks.find((t) => t.id === taskId);
     if (task) {
       setDeleteConfirmTask(task);
     }
-  };
+  }, [tasks]);
 
   const handleConfirmDelete = () => {
     if (deleteConfirmTask) {

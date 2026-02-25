@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { CSSProperties, MouseEvent } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import type { Task } from '../../types/task';
@@ -15,7 +16,7 @@ interface TaskBarProps {
   onEdit?: (task: Task) => void;
 }
 
-export function TaskBar({ task, timelineStartDate, viewMode, onResizeStart, onDelete, onEdit }: TaskBarProps) {
+export const TaskBar = memo(function TaskBar({ task, timelineStartDate, viewMode, onResizeStart, onDelete, onEdit }: TaskBarProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: task.id,
@@ -109,4 +110,4 @@ export function TaskBar({ task, timelineStartDate, viewMode, onResizeStart, onDe
       )}
     </div>
   );
-}
+});

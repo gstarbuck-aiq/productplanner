@@ -20,10 +20,10 @@ function AppContent() {
     setIsFormOpen(true);
   };
 
-  const handleOpenEditForm = (task: Task) => {
+  const handleOpenEditForm = useCallback((task: Task) => {
     setEditTask(task);
     setIsFormOpen(true);
-  };
+  }, []);
 
   const handleCloseForm = () => {
     setIsFormOpen(false);
