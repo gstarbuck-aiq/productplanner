@@ -24,7 +24,12 @@ export function Header({ onAddTask, onExportTimeline }: HeaderProps) {
     <>
       <header className="header">
         <div className="header-left">
-          <h1 className="app-title">Product Planner</h1>
+          <div className="app-branding">
+            <h1 className="app-title">Product Planner</h1>
+            <div className="build-info">
+              Built {format(new Date(__BUILD_TIME__), 'MMM d, yyyy h:mm a')}
+            </div>
+          </div>
           <div className="date-range">{dateRangeDisplay}</div>
         </div>
 

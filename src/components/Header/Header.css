@@ -15,11 +15,23 @@
   flex: 1;
 }
 
+.app-branding {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .app-title {
   margin: 0;
   font-size: 24px;
   font-weight: 700;
   color: #111827;
+}
+
+.build-info {
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 400;
 }
 
 .date-range {
