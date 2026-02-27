@@ -6,6 +6,7 @@ import type {
 } from "../types/milestone";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { getWeekStart } from "../utils/weekHelpers";
+import { generateId } from "../utils/generateId";
 import { STORAGE_KEY_MILESTONES } from "../constants";
 
 interface MilestoneContextValue {
@@ -59,9 +60,7 @@ export function MilestoneProvider({ children }: { children: ReactNode }) {
       } else {
         // Add new milestone
         const newMilestone: MilestoneJSON = {
-          id:
-            crypto?.randomUUID?.() ||
-            `milestone-${Date.now()}-${Math.random()}`,
+          id: generateId("milestone"),
           date: weekStart.toISOString(),
           label: input.label,
           createdAt: now.toISOString(),

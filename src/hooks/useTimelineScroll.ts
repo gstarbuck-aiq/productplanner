@@ -1,7 +1,7 @@
-import { useCallback, useRef } from 'react';
-import { addDays, addWeeks, addMonths, differenceInDays } from 'date-fns';
-import { useTimelineSettings } from '../context/TimelineSettingsContext';
-import { getTimeUnitStart } from '../utils/timeHelpers';
+import { useCallback, useRef } from "react";
+import { addDays, addWeeks, addMonths, differenceInDays } from "date-fns";
+import { useTimelineSettings } from "../context/TimelineSettingsContext";
+import { getTimeUnitStart } from "../utils/timeHelpers";
 
 /**
  * Custom hook for managing timeline viewport and scrolling
@@ -17,12 +17,15 @@ export function useTimelineScroll() {
   } = useTimelineSettings();
 
   // Scroll to a specific date (normalizes to time unit start)
-  const scrollToDate = useCallback((date: Date) => {
-    const normalizedStart = getTimeUnitStart(viewMode, date);
-    const rangeLength = differenceInDays(dateRangeEnd, dateRangeStart);
-    const normalizedEnd = addDays(normalizedStart, rangeLength);
-    setDateRange(normalizedStart, normalizedEnd);
-  }, [viewMode, dateRangeStart, dateRangeEnd, setDateRange]);
+  const scrollToDate = useCallback(
+    (date: Date) => {
+      const normalizedStart = getTimeUnitStart(viewMode, date);
+      const rangeLength = differenceInDays(dateRangeEnd, dateRangeStart);
+      const normalizedEnd = addDays(normalizedStart, rangeLength);
+      setDateRange(normalizedStart, normalizedEnd);
+    },
+    [viewMode, dateRangeStart, dateRangeEnd, setDateRange],
+  );
 
   // Scroll to current date (centered)
   const scrollToToday = useCallback(() => {
@@ -38,22 +41,20 @@ export function useTimelineScroll() {
 
   // Scroll to next period (shift by one week or month)
   const scrollNext = useCallback(() => {
-    const shiftFn = viewMode === 'week' ? addWeeks : addMonths;
-    const shiftAmount = 1;
+    const shiftFn = viewMode === "week" ? addWeeks : addMonths;
 
-    const newStart = shiftFn(dateRangeStart, shiftAmount);
-    const newEnd = shiftFn(dateRangeEnd, shiftAmount);
+    const newStart = shiftFn(dateRangeStart, 1);
+    const newEnd = shiftFn(dateRangeEnd, 1);
 
     setDateRange(newStart, newEnd);
   }, [viewMode, dateRangeStart, dateRangeEnd, setDateRange]);
 
   // Scroll to previous period (shift by one week or month)
   const scrollPrevious = useCallback(() => {
-    const shiftFn = viewMode === 'week' ? addWeeks : addMonths;
-    const shiftAmount = -1;
+    const shiftFn = viewMode === "week" ? addWeeks : addMonths;
 
-    const newStart = shiftFn(dateRangeStart, shiftAmount);
-    const newEnd = shiftFn(dateRangeEnd, shiftAmount);
+    const newStart = shiftFn(dateRangeStart, -1);
+    const newEnd = shiftFn(dateRangeEnd, -1);
 
     setDateRange(newStart, newEnd);
   }, [viewMode, dateRangeStart, dateRangeEnd, setDateRange]);
@@ -61,7 +62,6 @@ export function useTimelineScroll() {
   return {
     scrollContainerRef,
     timelineStart: dateRangeStart,
-    visibleWeeks: visibleTimeUnits, // Keep name for backwards compat
     visibleTimeUnits,
     viewMode,
     scrollToDate,

@@ -10,6 +10,7 @@ import type { Task, TaskInput, TaskJSON } from "../types/task";
 import { STORAGE_KEY_TASKS } from "../constants";
 import { calculateEndDate } from "../utils/weekHelpers";
 import { useTaskStacking } from "../hooks/useTaskStacking";
+import { generateId } from "../utils/generateId";
 
 interface TaskState {
   tasks: Task[];
@@ -94,13 +95,6 @@ function deserializeTasks(json: string): Task[] {
   }
 }
 
-/**
- * Generate unique ID for tasks
- */
-function generateId(): string {
-  return `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-}
-
 export function TaskProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(taskReducer, {
     tasks: [],
@@ -139,7 +133,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   const addTask = useCallback((input: TaskInput): string => {
     const now = new Date();
     const task: Task = {
-      id: generateId(),
+      id: generateId("task"),
       title: input.title,
       startDate: input.startDate,
       endDate: calculateEndDate(input.startDate, input.durationWeeks),

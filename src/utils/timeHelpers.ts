@@ -1,14 +1,14 @@
-import { differenceInDays, getDate } from 'date-fns';
-import type { ViewMode } from '../types/timeline';
-import type { Task } from '../types/task';
-import { WEEK_WIDTH, BASE_DAY_WIDTH } from '../constants';
+import { differenceInDays, getDate } from "date-fns";
+import type { ViewMode } from "../types/timeline";
+import type { Task } from "../types/task";
+import { WEEK_WIDTH, BASE_DAY_WIDTH } from "../constants";
 import {
   getWeekStart,
   getWeeksBetween,
   generateWeeks,
   formatWeekHeader,
   addWeeks,
-} from './weekHelpers';
+} from "./weekHelpers";
 import {
   getMonthStart,
   getMonthsBetween,
@@ -16,17 +16,17 @@ import {
   formatMonthHeader,
   calculateMonthWidth,
   addMonths,
-} from './monthHelpers';
+} from "./monthHelpers";
 
 /**
  * Get the width of a time unit (week or month) in pixels
  */
 export function getTimeUnitWidth(viewMode: ViewMode, date?: Date): number {
-  if (viewMode === 'week') {
+  if (viewMode === "week") {
     return WEEK_WIDTH;
   }
   if (!date) {
-    throw new Error('Date is required for month view width calculation');
+    throw new Error("Date is required for month view width calculation");
   }
   return calculateMonthWidth(date);
 }
@@ -35,7 +35,7 @@ export function getTimeUnitWidth(viewMode: ViewMode, date?: Date): number {
  * Get the start date of a time unit (week or month)
  */
 export function getTimeUnitStart(viewMode: ViewMode, date: Date): Date {
-  return viewMode === 'week' ? getWeekStart(date) : getMonthStart(date);
+  return viewMode === "week" ? getWeekStart(date) : getMonthStart(date);
 }
 
 /**
@@ -44,9 +44,9 @@ export function getTimeUnitStart(viewMode: ViewMode, date: Date): Date {
 export function getTimeUnitsBetween(
   viewMode: ViewMode,
   startDate: Date,
-  endDate: Date
+  endDate: Date,
 ): number {
-  return viewMode === 'week'
+  return viewMode === "week"
     ? getWeeksBetween(startDate, endDate)
     : getMonthsBetween(startDate, endDate);
 }
@@ -57,9 +57,9 @@ export function getTimeUnitsBetween(
 export function generateTimeUnits(
   viewMode: ViewMode,
   startDate: Date,
-  count: number
+  count: number,
 ): Date[] {
-  return viewMode === 'week'
+  return viewMode === "week"
     ? generateWeeks(startDate, count)
     : generateMonths(startDate, count);
 }
@@ -68,24 +68,25 @@ export function generateTimeUnits(
  * Format a time unit header label
  */
 export function formatTimeUnitHeader(viewMode: ViewMode, date: Date): string {
-  return viewMode === 'week' ? formatWeekHeader(date) : formatMonthHeader(date);
+  return viewMode === "week" ? formatWeekHeader(date) : formatMonthHeader(date);
 }
 
 /**
  * Add time units to a date
  */
-export function addTimeUnits(viewMode: ViewMode, date: Date, units: number): Date {
-  return viewMode === 'week' ? addWeeks(date, units) : addMonths(date, units);
+export function addTimeUnits(
+  viewMode: ViewMode,
+  date: Date,
+  units: number,
+): Date {
+  return viewMode === "week" ? addWeeks(date, units) : addMonths(date, units);
 }
 
 /**
  * Calculate the pixel width for a task in the given view mode
  */
-export function calculateTaskWidth(
-  viewMode: ViewMode,
-  task: Task
-): number {
-  if (viewMode === 'week') {
+export function calculateTaskWidth(viewMode: ViewMode, task: Task): number {
+  if (viewMode === "week") {
     return task.durationWeeks * WEEK_WIDTH;
   }
 
@@ -98,7 +99,10 @@ export function calculateTaskWidth(
  * Calculate the total width in pixels for a date span across months
  * Uses exact day count for precise rendering
  */
-export function calculateMonthSpanWidth(startDate: Date, endDate: Date): number {
+export function calculateMonthSpanWidth(
+  startDate: Date,
+  endDate: Date,
+): number {
   // Calculate the exact number of days in the span
   const days = differenceInDays(endDate, startDate);
 
@@ -114,9 +118,9 @@ export function calculateMonthSpanWidth(startDate: Date, endDate: Date): number 
 export function calculatePixelOffset(
   viewMode: ViewMode,
   timelineStart: Date,
-  targetDate: Date
+  targetDate: Date,
 ): number {
-  if (viewMode === 'week') {
+  if (viewMode === "week") {
     const weeksDiff = getWeeksBetween(timelineStart, targetDate);
     return weeksDiff * WEEK_WIDTH;
   }
@@ -148,27 +152,11 @@ export function calculatePixelOffset(
 export function getTimeUnitsInRange(
   viewMode: ViewMode,
   startDate: Date,
-  endDate: Date
+  endDate: Date,
 ): number {
   const start = getTimeUnitStart(viewMode, startDate);
   const end = getTimeUnitStart(viewMode, endDate);
   return getTimeUnitsBetween(viewMode, start, end);
-}
-
-/**
- * Get the total width in pixels for a date range
- */
-export function calculateRangeWidth(
-  viewMode: ViewMode,
-  startDate: Date,
-  endDate: Date
-): number {
-  if (viewMode === 'week') {
-    const weeks = getWeeksBetween(startDate, endDate);
-    return weeks * WEEK_WIDTH;
-  }
-
-  return calculateMonthSpanWidth(startDate, endDate);
 }
 
 /**
@@ -178,9 +166,9 @@ export function calculateRangeWidth(
 export function pixelToDate(
   viewMode: ViewMode,
   timelineStart: Date,
-  pixelOffset: number
+  pixelOffset: number,
 ): Date {
-  if (viewMode === 'week') {
+  if (viewMode === "week") {
     const weeks = Math.floor(pixelOffset / WEEK_WIDTH);
     return addWeeks(timelineStart, weeks);
   }

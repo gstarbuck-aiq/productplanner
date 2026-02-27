@@ -138,7 +138,7 @@ describe("TaskContext", () => {
       wrapper: TaskProvider,
     });
 
-    let taskId: string;
+    let taskId!: string;
 
     act(() => {
       taskId = result.current.addTask({
