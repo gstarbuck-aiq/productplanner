@@ -4,12 +4,12 @@ import {
   useReducer,
   useCallback,
   useEffect,
-} from 'react';
-import type { ReactNode } from 'react';
-import type { Task, TaskInput, TaskJSON } from '../types/task';
-import { STORAGE_KEY } from '../constants';
-import { calculateEndDate } from '../utils/weekHelpers';
-import { useTaskStacking } from '../hooks/useTaskStacking';
+} from "react";
+import type { ReactNode } from "react";
+import type { Task, TaskInput, TaskJSON } from "../types/task";
+import { STORAGE_KEY_TASKS } from "../constants";
+import { calculateEndDate } from "../utils/weekHelpers";
+import { useTaskStacking } from "../hooks/useTaskStacking";
 
 interface TaskState {
   tasks: Task[];
@@ -17,11 +17,11 @@ interface TaskState {
 }
 
 type TaskAction =
-  | { type: 'SET_TASKS'; payload: Task[] }
-  | { type: 'ADD_TASK'; payload: Task }
-  | { type: 'UPDATE_TASK'; payload: Task }
-  | { type: 'DELETE_TASK'; payload: string }
-  | { type: 'SET_LOADING'; payload: boolean };
+  | { type: "SET_TASKS"; payload: Task[] }
+  | { type: "ADD_TASK"; payload: Task }
+  | { type: "UPDATE_TASK"; payload: Task }
+  | { type: "DELETE_TASK"; payload: string }
+  | { type: "SET_LOADING"; payload: boolean };
 
 interface TaskContextType {
   tasks: Task[];
@@ -38,23 +38,23 @@ const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
 function taskReducer(state: TaskState, action: TaskAction): TaskState {
   switch (action.type) {
-    case 'SET_TASKS':
+    case "SET_TASKS":
       return { ...state, tasks: action.payload };
-    case 'ADD_TASK':
+    case "ADD_TASK":
       return { ...state, tasks: [...state.tasks, action.payload] };
-    case 'UPDATE_TASK':
+    case "UPDATE_TASK":
       return {
         ...state,
         tasks: state.tasks.map((t) =>
-          t.id === action.payload.id ? action.payload : t
+          t.id === action.payload.id ? action.payload : t,
         ),
       };
-    case 'DELETE_TASK':
+    case "DELETE_TASK":
       return {
         ...state,
         tasks: state.tasks.filter((t) => t.id !== action.payload),
       };
-    case 'SET_LOADING':
+    case "SET_LOADING":
       return { ...state, isLoading: action.payload };
     default:
       return state;
@@ -89,7 +89,7 @@ function deserializeTasks(json: string): Task[] {
       updatedAt: new Date(task.updatedAt),
     }));
   } catch (error) {
-    console.error('Error deserializing tasks:', error);
+    console.error("Error deserializing tasks:", error);
     return [];
   }
 }
@@ -113,15 +113,15 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   // Load tasks from localStorage on mount
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem(STORAGE_KEY_TASKS);
       if (stored) {
         const tasks = deserializeTasks(stored);
-        dispatch({ type: 'SET_TASKS', payload: tasks });
+        dispatch({ type: "SET_TASKS", payload: tasks });
       }
     } catch (error) {
-      console.error('Error loading tasks:', error);
+      console.error("Error loading tasks:", error);
     } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   }, []);
 
@@ -129,9 +129,9 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!state.isLoading && stackedTasks.length >= 0) {
       try {
-        localStorage.setItem(STORAGE_KEY, serializeTasks(stackedTasks));
+        localStorage.setItem(STORAGE_KEY_TASKS, serializeTasks(stackedTasks));
       } catch (error) {
-        console.error('Error saving tasks:', error);
+        console.error("Error saving tasks:", error);
       }
     }
   }, [stackedTasks, state.isLoading]);
@@ -150,7 +150,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
       updatedAt: now,
     };
 
-    dispatch({ type: 'ADD_TASK', payload: task });
+    dispatch({ type: "ADD_TASK", payload: task });
     return task.id;
   }, []);
 
@@ -159,26 +159,29 @@ export function TaskProvider({ children }: { children: ReactNode }) {
       ...task,
       updatedAt: new Date(),
     };
-    dispatch({ type: 'UPDATE_TASK', payload: updated });
+    dispatch({ type: "UPDATE_TASK", payload: updated });
   }, []);
 
   const deleteTask = useCallback((id: string) => {
-    dispatch({ type: 'DELETE_TASK', payload: id });
+    dispatch({ type: "DELETE_TASK", payload: id });
   }, []);
 
-  const moveTask = useCallback((id: string, newStartDate: Date) => {
-    const task = stackedTasks.find((t) => t.id === id);
-    if (!task) return;
+  const moveTask = useCallback(
+    (id: string, newStartDate: Date) => {
+      const task = stackedTasks.find((t) => t.id === id);
+      if (!task) return;
 
-    const updated: Task = {
-      ...task,
-      startDate: newStartDate,
-      endDate: calculateEndDate(newStartDate, task.durationWeeks),
-      updatedAt: new Date(),
-    };
+      const updated: Task = {
+        ...task,
+        startDate: newStartDate,
+        endDate: calculateEndDate(newStartDate, task.durationWeeks),
+        updatedAt: new Date(),
+      };
 
-    dispatch({ type: 'UPDATE_TASK', payload: updated });
-  }, [stackedTasks]);
+      dispatch({ type: "UPDATE_TASK", payload: updated });
+    },
+    [stackedTasks],
+  );
 
   const resizeTask = useCallback(
     (id: string, newStartDate: Date, newDuration: number) => {
@@ -193,16 +196,16 @@ export function TaskProvider({ children }: { children: ReactNode }) {
         updatedAt: new Date(),
       };
 
-      dispatch({ type: 'UPDATE_TASK', payload: updated });
+      dispatch({ type: "UPDATE_TASK", payload: updated });
     },
-    [stackedTasks]
+    [stackedTasks],
   );
 
   const getTaskById = useCallback(
     (id: string) => {
       return stackedTasks.find((t) => t.id === id);
     },
-    [stackedTasks]
+    [stackedTasks],
   );
 
   const value: TaskContextType = {
@@ -222,7 +225,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 export function useTasks(): TaskContextType {
   const context = useContext(TaskContext);
   if (!context) {
-    throw new Error('useTasks must be used within a TaskProvider');
+    throw new Error("useTasks must be used within a TaskProvider");
   }
   return context;
 }

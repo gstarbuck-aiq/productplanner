@@ -1,7 +1,12 @@
-import { createContext, useContext, useCallback, type ReactNode } from 'react';
-import type { Milestone, MilestoneInput, MilestoneJSON } from '../types/milestone';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import { getWeekStart } from '../utils/weekHelpers';
+import { createContext, useContext, useCallback, type ReactNode } from "react";
+import type {
+  Milestone,
+  MilestoneInput,
+  MilestoneJSON,
+} from "../types/milestone";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { getWeekStart } from "../utils/weekHelpers";
+import { STORAGE_KEY_MILESTONES } from "../constants";
 
 interface MilestoneContextValue {
   milestones: Milestone[];
@@ -11,9 +16,9 @@ interface MilestoneContextValue {
   getMilestoneForDate: (date: Date) => Milestone | undefined;
 }
 
-const MilestoneContext = createContext<MilestoneContextValue | undefined>(undefined);
-
-const STORAGE_KEY = 'taskplanner_milestones';
+const MilestoneContext = createContext<MilestoneContextValue | undefined>(
+  undefined,
+);
 
 function deserializeMilestone(json: MilestoneJSON): Milestone {
   return {
@@ -25,10 +30,9 @@ function deserializeMilestone(json: MilestoneJSON): Milestone {
 }
 
 export function MilestoneProvider({ children }: { children: ReactNode }) {
-  const [storedMilestones, setStoredMilestones] = useLocalStorage<MilestoneJSON[]>(
-    STORAGE_KEY,
-    []
-  );
+  const [storedMilestones, setStoredMilestones] = useLocalStorage<
+    MilestoneJSON[]
+  >(STORAGE_KEY_MILESTONES, []);
 
   const milestones = storedMilestones.map(deserializeMilestone);
 
@@ -55,7 +59,9 @@ export function MilestoneProvider({ children }: { children: ReactNode }) {
       } else {
         // Add new milestone
         const newMilestone: MilestoneJSON = {
-          id: crypto?.randomUUID?.() || `milestone-${Date.now()}-${Math.random()}`,
+          id:
+            crypto?.randomUUID?.() ||
+            `milestone-${Date.now()}-${Math.random()}`,
           date: weekStart.toISOString(),
           label: input.label,
           createdAt: now.toISOString(),
@@ -64,26 +70,24 @@ export function MilestoneProvider({ children }: { children: ReactNode }) {
         setStoredMilestones([...storedMilestones, newMilestone]);
       }
     },
-    [storedMilestones, setStoredMilestones]
+    [storedMilestones, setStoredMilestones],
   );
 
   const updateMilestone = useCallback(
     (id: string, label: string) => {
       const updated = storedMilestones.map((m) =>
-        m.id === id
-          ? { ...m, label, updatedAt: new Date().toISOString() }
-          : m
+        m.id === id ? { ...m, label, updatedAt: new Date().toISOString() } : m,
       );
       setStoredMilestones(updated);
     },
-    [storedMilestones, setStoredMilestones]
+    [storedMilestones, setStoredMilestones],
   );
 
   const deleteMilestone = useCallback(
     (id: string) => {
       setStoredMilestones(storedMilestones.filter((m) => m.id !== id));
     },
-    [storedMilestones, setStoredMilestones]
+    [storedMilestones, setStoredMilestones],
   );
 
   const getMilestoneForDate = useCallback(
@@ -94,7 +98,7 @@ export function MilestoneProvider({ children }: { children: ReactNode }) {
         return mWeekStart.getTime() === weekStart.getTime();
       });
     },
-    [milestones]
+    [milestones],
   );
 
   const value: MilestoneContextValue = {
@@ -115,7 +119,7 @@ export function MilestoneProvider({ children }: { children: ReactNode }) {
 export function useMilestones() {
   const context = useContext(MilestoneContext);
   if (context === undefined) {
-    throw new Error('useMilestones must be used within a MilestoneProvider');
+    throw new Error("useMilestones must be used within a MilestoneProvider");
   }
   return context;
 }

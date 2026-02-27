@@ -1,10 +1,18 @@
-import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react';
-import { addWeeks } from 'date-fns';
-import type { ViewMode, DateRange } from '../types/timeline';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import { getWeekStart } from '../utils/weekHelpers';
-import { getTimeUnitStart, generateTimeUnits } from '../utils/timeHelpers';
-import { DEFAULT_DATE_RANGE_WEEKS } from '../constants';
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+  type ReactNode,
+} from "react";
+import { STORAGE_KEY_TIMELINE_SETTINGS } from "../constants";
+import { addWeeks } from "date-fns";
+import type { ViewMode, DateRange } from "../types/timeline";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { getWeekStart } from "../utils/weekHelpers";
+import { getTimeUnitStart, generateTimeUnits } from "../utils/timeHelpers";
+import { DEFAULT_DATE_RANGE_WEEKS } from "../constants";
 
 interface TimelineSettingsContextValue {
   viewMode: ViewMode;
@@ -15,11 +23,9 @@ interface TimelineSettingsContextValue {
   setDateRange: (start: Date, end: Date) => void;
 }
 
-const TimelineSettingsContext = createContext<TimelineSettingsContextValue | undefined>(
-  undefined
-);
-
-const STORAGE_KEY = 'taskplanner_timeline_settings';
+const TimelineSettingsContext = createContext<
+  TimelineSettingsContextValue | undefined
+>(undefined);
 
 interface StoredSettings {
   viewMode: ViewMode;
@@ -34,26 +40,28 @@ function getDefaultDateRange(): DateRange {
   return { start, end };
 }
 
-export function TimelineSettingsProvider({ children }: { children: ReactNode }) {
-  const [storedSettings, setStoredSettings] = useLocalStorage<StoredSettings | null>(
-    STORAGE_KEY,
-    null
-  );
+export function TimelineSettingsProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const [storedSettings, setStoredSettings] =
+    useLocalStorage<StoredSettings | null>(STORAGE_KEY_TIMELINE_SETTINGS, null);
 
   // Initialize from localStorage or defaults
   const defaultRange = getDefaultDateRange();
   const [viewMode, setViewModeState] = useState<ViewMode>(
-    storedSettings?.viewMode || 'week'
+    storedSettings?.viewMode || "week",
   );
   const [dateRangeStart, setDateRangeStart] = useState<Date>(
     storedSettings?.dateRangeStart
       ? new Date(storedSettings.dateRangeStart)
-      : defaultRange.start
+      : defaultRange.start,
   );
   const [dateRangeEnd, setDateRangeEnd] = useState<Date>(
     storedSettings?.dateRangeEnd
       ? new Date(storedSettings.dateRangeEnd)
-      : defaultRange.end
+      : defaultRange.end,
   );
 
   // Calculate visible time units based on current settings
@@ -64,7 +72,7 @@ export function TimelineSettingsProvider({ children }: { children: ReactNode }) 
     // Calculate how many units we need
     let count = 0;
     let current = start;
-    const increment = viewMode === 'week' ? 7 : 30; // Approximate days
+    const increment = viewMode === "week" ? 7 : 30; // Approximate days
 
     while (current <= end) {
       count++;
@@ -74,27 +82,33 @@ export function TimelineSettingsProvider({ children }: { children: ReactNode }) 
     return generateTimeUnits(viewMode, start, Math.max(count, 1));
   }, [viewMode, dateRangeStart, dateRangeEnd]);
 
-  const setViewMode = useCallback((mode: ViewMode) => {
-    setViewModeState(mode);
-    setStoredSettings((prev) => ({
-      viewMode: mode,
-      dateRangeStart: prev?.dateRangeStart || dateRangeStart.toISOString(),
-      dateRangeEnd: prev?.dateRangeEnd || dateRangeEnd.toISOString(),
-    }));
-  }, [dateRangeStart, dateRangeEnd, setStoredSettings]);
+  const setViewMode = useCallback(
+    (mode: ViewMode) => {
+      setViewModeState(mode);
+      setStoredSettings((prev) => ({
+        viewMode: mode,
+        dateRangeStart: prev?.dateRangeStart || dateRangeStart.toISOString(),
+        dateRangeEnd: prev?.dateRangeEnd || dateRangeEnd.toISOString(),
+      }));
+    },
+    [dateRangeStart, dateRangeEnd, setStoredSettings],
+  );
 
-  const setDateRange = useCallback((start: Date, end: Date) => {
-    const normalizedStart = getTimeUnitStart(viewMode, start);
-    const normalizedEnd = getTimeUnitStart(viewMode, end);
+  const setDateRange = useCallback(
+    (start: Date, end: Date) => {
+      const normalizedStart = getTimeUnitStart(viewMode, start);
+      const normalizedEnd = getTimeUnitStart(viewMode, end);
 
-    setDateRangeStart(normalizedStart);
-    setDateRangeEnd(normalizedEnd);
-    setStoredSettings({
-      viewMode,
-      dateRangeStart: normalizedStart.toISOString(),
-      dateRangeEnd: normalizedEnd.toISOString(),
-    });
-  }, [viewMode, setStoredSettings]);
+      setDateRangeStart(normalizedStart);
+      setDateRangeEnd(normalizedEnd);
+      setStoredSettings({
+        viewMode,
+        dateRangeStart: normalizedStart.toISOString(),
+        dateRangeEnd: normalizedEnd.toISOString(),
+      });
+    },
+    [viewMode, setStoredSettings],
+  );
 
   const value: TimelineSettingsContextValue = {
     viewMode,
@@ -115,7 +129,9 @@ export function TimelineSettingsProvider({ children }: { children: ReactNode }) 
 export function useTimelineSettings() {
   const context = useContext(TimelineSettingsContext);
   if (context === undefined) {
-    throw new Error('useTimelineSettings must be used within a TimelineSettingsProvider');
+    throw new Error(
+      "useTimelineSettings must be used within a TimelineSettingsProvider",
+    );
   }
   return context;
 }

@@ -38,22 +38,29 @@ export const WEEK_STARTS_ON = 1;
  * Ensures good contrast and visual distinction
  */
 export const COLOR_PALETTE = [
-  '#3b82f6', // Blue
-  '#10b981', // Green
-  '#f59e0b', // Amber
-  '#ef4444', // Red
-  '#8b5cf6', // Purple
-  '#ec4899', // Pink
-  '#06b6d4', // Cyan
-  '#f97316', // Orange
-  '#6366f1', // Indigo
-  '#14b8a6', // Teal
+  "#3b82f6", // Blue
+  "#10b981", // Green
+  "#f59e0b", // Amber
+  "#ef4444", // Red
+  "#8b5cf6", // Purple
+  "#ec4899", // Pink
+  "#06b6d4", // Cyan
+  "#f97316", // Orange
+  "#6366f1", // Indigo
+  "#14b8a6", // Teal
 ];
 
 /**
- * LocalStorage key for persisting tasks
+ * LocalStorage keys for persisting application state
  */
-export const STORAGE_KEY = 'taskplanner_tasks';
+export const STORAGE_KEY_TASKS = "taskplanner_tasks";
+export const STORAGE_KEY_MILESTONES = "taskplanner_milestones";
+export const STORAGE_KEY_TIMELINE_SETTINGS = "taskplanner_timeline_settings";
+
+/**
+ * @deprecated Use STORAGE_KEY_TASKS instead
+ */
+export const STORAGE_KEY = STORAGE_KEY_TASKS;
 
 /**
  * Minimum task duration in weeks
